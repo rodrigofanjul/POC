@@ -135,7 +135,7 @@
           lat: -38.0071684,
           lng: -57.5465526
         },
-        zoom: 13
+        zoom: 12
       });
       // Iniciar ventana de información
       infoWindow = new google.maps.InfoWindow;
@@ -162,7 +162,7 @@
             lng: position.coords.longitude,
             accuracy: position.coords.accuracy
           };
-          map.setCenter(pos);
+          //map.setCenter(pos);
         }, function() {
           handleLocationError(true, infoWindow, map.getCenter());
         });
