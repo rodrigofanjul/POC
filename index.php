@@ -59,26 +59,21 @@
 
     #register input[type="register"] {
       position: absolute;
-      top: 50%;
+      top: 40%;
       width: 100%;
       color: rgb(255, 255, 255);
       background: rgba(0, 0, 0, 0);
-      font-size: 60px;
+      font-size: calc(2em + 1vw);
       font-weight: 300;
       text-align: center;
       border: 0px;
-      margin: 0px auto;
-      margin-top: -51px;
-      padding-left: 30px;
-      padding-right: 30px;
       outline: none;
     }
 
     #register .btn {
       position: absolute;
-      top: 50%;
+      top: 60%;
       left: 50%;
-      margin-top: 61px;
       margin-left: -90px;
     }
 
@@ -86,7 +81,7 @@
       position: absolute;
       top: 20px;
       right: 45px;
-      font-size: 60px;
+      font-size: calc(2em + 1vw);
       cursor: pointer;
       color: white;
     }
@@ -117,19 +112,6 @@
 <html>
 
 <body>
-
-  <div id="popup_content_wrap" style='display:none'>
-    <div id="popup_content" class="text-light">
-      <center>
-        <h1>POC - Geolocation API</h1>
-        <br>
-        <p>A continuación podrás realizar una prueba concepto de la API de geolocalización de Google.</p>
-        <p class="text-warning">Importante: Primero debes permitir el uso de la ubicación en tu navegador.</p>
-        <br>
-        <input type="submit" name="submit" value="Continuar" class="btn btn-primary" onClick="popup_content('hide')" />
-      </center>
-    </div>
-  </div>
 
   <div id="map"></div>
 
@@ -215,24 +197,11 @@
       infoWindow.open(map);
     }
 
-    function popup_content(hideOrshow) {
-      if (hideOrshow == 'hide') {
-        document.getElementById('popup_content_wrap').style.display = "none";
-        setCookie('popup','ok',365);
-      } else document.getElementById('popup_content_wrap').removeAttribute('style');
-    }
-
     $(document).ready(function() {
       let name = getCookie("name");
       if (name.length == 0) {
         $('#register').addClass('open');
         $('#register > form > input[type="register"]').focus();
-        let popup = getCookie("popup");
-        if (popup !== "ok") {
-          setTimeout(function() {
-            popup_content('show');
-          }, 500);
-        }
       } else {
         $.notify(`${name}, tu geolocalización fue cargada correctamente.`, "info");
       }
