@@ -145,30 +145,30 @@
         var markers = JSON.parse(data.responseText);
         Array.prototype.forEach.call(markers, function(markerElem) {
           let displayInfo = markerElem.name === getCookie("name");
-          createMarker(markerElem.name, {
+          createMarker(markerElem.name, { location: {
             lat: markerElem.lat,
-            lng: markerElem.lng,
+            lng: markerElem.lng, },
             accuracy: markerElem.accuracy
           }, markerElem.time, displayInfo);
         });
       });
 
       // Geolocalización
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function(position) {
-          console.log(position);
-          pos = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-            accuracy: position.coords.accuracy
-          };
-          //map.setCenter(pos);
-        }, function() {
-          handleLocationError(true, infoWindow, map.getCenter());
-        });
-      } else {
-        handleLocationError(false, infoWindow, map.getCenter());
-      }
+      // if (navigator.geolocation) {
+      //   navigator.geolocation.getCurrentPosition(function(position) {
+      //     console.log(position);
+      //     pos = {
+      //       lat: position.coords.latitude,
+      //       lng: position.coords.longitude,
+      //       accuracy: position.coords.accuracy
+      //     };
+      //     //map.setCenter(pos);
+      //   }, function() {
+      //     handleLocationError(true, infoWindow, map.getCenter());
+      //   });
+      // } else {
+      //   handleLocationError(false, infoWindow, map.getCenter());
+      // }
     }
 
     function downloadUrl(url, callback) {
@@ -189,15 +189,16 @@
 
     function doNothing() {}
 
-    function handleLocationError(browserHasGeolocation, infoWindow, pos) {
-      infoWindow.setPosition(pos);
-      infoWindow.setContent(browserHasGeolocation ?
-        'Error: The Geolocation service failed.' :
-        'Error: Your browser doesn\'t support geolocation.');
-      infoWindow.open(map);
-    }
+    // function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+    //   infoWindow.setPosition(pos);
+    //   infoWindow.setContent(browserHasGeolocation ?
+    //     'Error: The Geolocation service failed.' :
+    //     'Error: Your browser doesn\'t support geolocation.');
+    //   infoWindow.open(map);
+    // }
 
     $(document).ready(function() {
+      getGeoLocation();
       let name = getCookie("name");
       if (name.length == 0) {
         $('#register').addClass('open');
@@ -232,8 +233,8 @@
         url: "savemarker.php",
         data: {
           name: name,
-          lat: pos.lat,
-          lng: pos.lng,
+          lat: pos.location.lat,
+          lng: pos.location.lng,
           accuracy: pos.accuracy
         },
         success: function(response) {
@@ -245,10 +246,25 @@
       });
     }
 
+    function getGeoLocation() {
+      $.ajax({
+        type: "POST",
+        url: "https://www.googleapis.com/geolocation/v1/geolocate",
+        data: {
+          key: "AIzaSyCRgK3LhRQrlxsm1xrPNwdtW-akcbhps08"
+        },
+        success: function(response) {
+          console.log(response);
+          pos = response;
+        }
+      });
+      
+    }
+
     function createMarker(name, pos, time, displayInfo) {
       let point = new google.maps.LatLng(
-        parseFloat(pos.lat),
-        parseFloat(pos.lng));
+        parseFloat(pos.location.lat),
+        parseFloat(pos.location.lng));
       let date = time == null ? new Date() : new Date(time);
 
       var infowincontent = document.createElement('div');
@@ -258,7 +274,7 @@
       infowincontent.appendChild(document.createElement('br'));
 
       var divDescription = document.createElement('div');
-      divDescription.innerHTML = `Coordenadas: ${pos.lat},${pos.lng}<br>Exactitud: ${Math.round(pos.accuracy)} metros<br>Creado: ${date.toLocaleString()}`
+      divDescription.innerHTML = `Coordenadas: ${pos.location.lat},${pos.location.lng}<br>Exactitud: ${Math.round(pos.accuracy)} metros<br>Creado: ${date.toLocaleString()}`
       infowincontent.appendChild(divDescription);
 
       let marker = new google.maps.Marker({
